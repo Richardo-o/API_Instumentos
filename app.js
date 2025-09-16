@@ -1,21 +1,38 @@
 import express from "express"
+import mongoose from "mongoose"
+import Instrumento from "./models/Instrumentos.js"
+import instrumentoRoutes from "./routes/instrumentoRoutes.js"
+
 const app = express()
 
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
+app.use("/", instrumentoRoutes)
+
+mongoose.connect("mongodb://localhost:27017/api-instrumentos")
+
+app.get("/", async (req,res) => {
+    try{
+        const instrumentos = await Instrumento.find()
+        res.status(200).json({instrumento : instrumento})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json({error: "Erro interno no servidor"})
+    }
+})
 
 app.get("/", (req, res) => {
     const instrumentos = [
         {
-            nome: "Guitarra",
-            categoria: "Cordas",
-            descricao: "Instrumento elétrico versátil para vários estilos musicais",
+            name: "Guitarra",
+            category: "Cordas",
+            description: "Instrumento elétrico versátil para vários estilos musicais",
             price: 1500
         },
         {
-            nome: "Piano",
-            categoria: "Teclas",
-            descricao: "Instrumento de teclado clássico, ideal para música erudita e contemporânea",
+            name: "Piano",
+            category: "Teclas",
+            description: "Instrumento de teclado clássico, ideal para música erudita e contemporânea",
             price: 12000
         },
     ]
