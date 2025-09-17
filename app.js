@@ -1,31 +1,57 @@
-import express from "express"
-const app = express()
+import express from "express";
+import mongoose from "mongoose";
 
-app.use(express.urlencoded({extended: false}))
-app.use(express.json())
+
+// Importando para ser criado no banco
+import Instrumento from "./models/Instrumentos.js";
+import User from "./models/Users.js"
+
+// Importando as rotas
+import instrumentoRoutes from "./routes/instrumentoRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+
+const app = express();
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use("/", instrumentoRoutes);
+app.use("/", userRoutes);
+
+mongoose.connect("mongodb://localhost:27017/api-instrumentos");
+
+app.get("/", async (req, res) => {
+  try {
+    const instrumentos = await Instrumento.find();
+    res.status(200).json({ instrumento: instrumento });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Erro interno no servidor" });
+  }
+});
 
 app.get("/", (req, res) => {
-    const instrumentos = [
-        {
-            nome: "Guitarra",
-            categoria: "Cordas",
-            descricao: "Instrumento elétrico versátil para vários estilos musicais",
-            price: 1500
-        },
-        {
-            nome: "Piano",
-            categoria: "Teclas",
-            descricao: "Instrumento de teclado clássico, ideal para música erudita e contemporânea",
-            price: 12000
-        },
-    ]
-    res.json(instrumentos)
-})
+  const instrumentos = [
+    {
+      name: "Guitarra",
+      category: "Cordas",
+      description: "Instrumento elétrico versátil para vários estilos musicais",
+      price: 1500,
+    },
+    {
+      name: "Piano",
+      category: "Teclas",
+      description:
+        "Instrumento de teclado clássico, ideal para música erudita e contemporânea",
+      price: 12000,
+    },
+  ];
+  res.json(instrumentos);
+});
 
-const port = 4000
-app.listen(port,(error)=>{
-    if(error){
-        console.log(error);
-    }
-    console.log(`API rodando em http:localhost:${port}.`)
-})
+const port = 4000;
+app.listen(port, (error) => {
+  if (error) {
+    console.log(error);
+  }
+  console.log(`API rodando em http:localhost:${port}.`);
+});
