@@ -1,13 +1,21 @@
 import express from "express";
 import mongoose from "mongoose";
+
+
+// Importando para ser criado no banco
 import Instrumento from "./models/Instrumentos.js";
+import User from "./models/Users.js"
+
+// Importando as rotas
 import instrumentoRoutes from "./routes/instrumentoRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use("/", instrumentoRoutes);
+app.use("/", userRoutes);
 
 mongoose.connect("mongodb://localhost:27017/api-instrumentos");
 
