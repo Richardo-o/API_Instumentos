@@ -1,15 +1,39 @@
-import express from 'express'
-const instrumentoRoutes = express.Router()
-import instrumentoController from '../controller/instrumentoController.js'
+import express from "express";
+const instrumentoRoutes = express.Router();
+import instrumentoController from "../controllers/instrumentoController.js";
 
-instrumentoRoutes.get("/instrumentos", instrumentoController.getAllInstrumentos)
+// Importando Middleware
 
-instrumentoRoutes.post("/instrumento", instrumentoController.createInstrumento)
+import Auth from "../middleware/Auth.js";
 
-instrumentoRoutes.delete("/instrumento/:id", instrumentoController.deleteInstrumento)
+instrumentoRoutes.get(
+  "/instrumentos",
+  Auth.Authorization, 
+  instrumentoController.getAllInstrumentos
+);
 
-instrumentoRoutes.put("/instrumento/:id", instrumentoController.updateInstrumento)
+instrumentoRoutes.post(
+  "/instrumento",
+  Auth.Authorization,
+  instrumentoController.createInstrumento
+);
 
-instrumentoRoutes.get("/instrumento/:id", instrumentoController.getOneInstrumento)
+instrumentoRoutes.delete(
+  "/instrumento/:id",
+  Auth.Authorization, 
+  instrumentoController.deleteInstrumento
+);
 
-export default instrumentoRoutes
+instrumentoRoutes.put(
+  "/instrumento/:id",
+  Auth.Authorization, 
+  instrumentoController.updateInstrumento
+);
+
+instrumentoRoutes.get(
+  "/instrumento/:id",
+  Auth.Authorization, 
+  instrumentoController.getOneInstrumento
+);
+
+export default instrumentoRoutes;
