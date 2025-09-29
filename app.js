@@ -2,12 +2,17 @@ import express from "express"
 import mongoose from "mongoose"
 import Instrumento from "./models/Instrumentos.js"
 import instrumentoRoutes from "./routes/instrumentoRoutes.js"
+import swaggerJSDoc from "swagger-jsdoc"
+import swaggerUi from "swagger-ui-express"
+import swaggerOptions from "./config/swagger-config.js"
 
 const app = express()
+const swaggerDocs = swaggerJSDoc(swaggerOptions)
 
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 app.use("/", instrumentoRoutes)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 mongoose.connect("mongodb://localhost:27017/api-instrumentos")
 
