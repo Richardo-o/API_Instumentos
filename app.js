@@ -1,3 +1,20 @@
+<<<<<<< HEAD
+import express from "express"
+import mongoose from "mongoose"
+import Instrumento from "./models/Instrumentos.js"
+import instrumentoRoutes from "./routes/instrumentoRoutes.js"
+import swaggerJSDoc from "swagger-jsdoc"
+import swaggerUi from "swagger-ui-express"
+import swaggerOptions from "./config/swagger-config.js"
+
+const app = express()
+const swaggerDocs = swaggerJSDoc(swaggerOptions)
+
+app.use(express.urlencoded({extended: false}))
+app.use(express.json())
+app.use("/", instrumentoRoutes)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
+=======
 import express from "express";
 import mongoose from "mongoose";
 
@@ -5,6 +22,7 @@ import mongoose from "mongoose";
 // Importando para ser criado no banco
 import Instrumento from "./models/Instrumentos.js";
 import User from "./models/Users.js"
+>>>>>>> cd4a3f39a884d1ec5acc12440a3b14a56236bdac
 
 // Importando as rotas
 import instrumentoRoutes from "./routes/instrumentoRoutes.js";
