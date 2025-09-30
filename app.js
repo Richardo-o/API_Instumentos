@@ -1,75 +1,63 @@
-<<<<<<< HEAD
-import express from "express"
-import mongoose from "mongoose"
-import Instrumento from "./models/Instrumentos.js"
-import instrumentoRoutes from "./routes/instrumentoRoutes.js"
-import swaggerJSDoc from "swagger-jsdoc"
-import swaggerUi from "swagger-ui-express"
-import swaggerOptions from "./config/swagger-config.js"
-
-const app = express()
-const swaggerDocs = swaggerJSDoc(swaggerOptions)
-
-app.use(express.urlencoded({extended: false}))
-app.use(express.json())
-app.use("/", instrumentoRoutes)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
-=======
 import express from "express";
-import mongoose from "mongoose";
-
-
-// Importando para ser criado no banco
+import mongoose from "./config/db-connection.js";
 import Instrumento from "./models/Instrumentos.js";
-import User from "./models/Users.js"
->>>>>>> cd4a3f39a884d1ec5acc12440a3b14a56236bdac
-
-// Importando as rotas
 import instrumentoRoutes from "./routes/instrumentoRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import swaggerOptions from "./config/swagger-config.js";
 
 const app = express();
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
+// Middlewares
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+// Rotas
 app.use("/", instrumentoRoutes);
 app.use("/", userRoutes);
 
-mongoose.connect("mongodb://localhost:27017/api-instrumentos");
+// Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+
+// Rota para cadastrar instrumentos fixos
 app.get("/", async (req, res) => {
   try {
-    const instrumentos = await Instrumento.find();
-    res.status(200).json({ instrumento: instrumento });
+    const instrumentos = [
+      {
+        name: "Guitarra",
+        category: "Cordas",
+        description: "Instrumento elétrico versátil para vários estilos musicais",
+        price: 1500,
+      },
+      {
+        name: "Piano",
+        category: "Teclas",
+        description:
+          "Instrumento de teclado clássico, ideal para música erudita e contemporânea",
+        price: 12000,
+      },
+    ];
+
+    // Insere os instrumentos no banco (se não existirem ainda)
+    const saved = await Instrumento.insertMany(instrumentos);
+
+    res.status(201).json(saved);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Erro interno no servidor" });
+    console.error(error);
+    res
+      .status(500)
+      .json({ erro: "Não foi possível cadastrar os instrumentos" });
   }
 });
 
-app.get("/", (req, res) => {
-  const instrumentos = [
-    {
-      name: "Guitarra",
-      category: "Cordas",
-      description: "Instrumento elétrico versátil para vários estilos musicais",
-      price: 1500,
-    },
-    {
-      name: "Piano",
-      category: "Teclas",
-      description:
-        "Instrumento de teclado clássico, ideal para música erudita e contemporânea",
-      price: 12000,
-    },
-  ];
-  res.json(instrumentos);
-});
-
+// Inicializa servidor
 const port = 4000;
 app.listen(port, (error) => {
   if (error) {
-    console.log(error);
+    console.error(error);
   }
-  console.log(`API rodando em http:localhost:${port}.`);
+  console.log(`🚀 API rodando em http://localhost:${port}`);
 });
